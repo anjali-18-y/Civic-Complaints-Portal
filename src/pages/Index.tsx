@@ -49,7 +49,25 @@ const Index = () => {
       .order("created_at", { ascending: false })
       .limit(5);
     
-    setUserReports(data || []);
+    // Generate signed URLs for private images
+    const reportsWithSignedUrls = await Promise.all(
+      (data || []).map(async (report) => {
+        if (report.image_url) {
+          const fileName = report.image_url.split('/').pop();
+          const { data: signedUrlData } = await supabase.storage
+            .from('reports')
+            .createSignedUrl(fileName, 3600); // 1 hour expiry
+          
+          return {
+            ...report,
+            image_url: signedUrlData?.signedUrl || report.image_url
+          };
+        }
+        return report;
+      })
+    );
+    
+    setUserReports(reportsWithSignedUrls);
   };
 
   const handleLogout = async () => {

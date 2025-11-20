@@ -62,7 +62,24 @@ const Dashboard = () => {
     if (error) {
       toast.error("Failed to fetch reports");
     } else {
-      setReports(data || []);
+      // Generate signed URLs for private images
+      const reportsWithSignedUrls = await Promise.all(
+        (data || []).map(async (report) => {
+          if (report.image_url) {
+            const fileName = report.image_url.split('/').pop();
+            const { data: signedUrlData } = await supabase.storage
+              .from('reports')
+              .createSignedUrl(fileName, 3600); // 1 hour expiry
+            
+            return {
+              ...report,
+              image_url: signedUrlData?.signedUrl || report.image_url
+            };
+          }
+          return report;
+        })
+      );
+      setReports(reportsWithSignedUrls);
     }
     setLoading(false);
   };

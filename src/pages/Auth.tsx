@@ -40,7 +40,12 @@ const Auth = () => {
         navigate("/");
       }
     } catch (error: any) {
-      toast.error(error.message);
+      if (isLogin) {
+        toast.error("Invalid email or password. Please try again.");
+      } else {
+        toast.error("Unable to create account. Please try again or contact support.");
+      }
+      console.error("Auth error:", error);
     } finally {
       setLoading(false);
     }
