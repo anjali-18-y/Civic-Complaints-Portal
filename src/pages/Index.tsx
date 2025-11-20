@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, CheckCircle, Clock, MapPin, LogOut, LayoutDashboard } from "lucide-react";
-import heroImage from "@/assets/hero-civic.jpg";
+import heroImage from "@/assets/hero-civic-india.jpg";
 
 const Index = () => {
   const navigate = useNavigate();
