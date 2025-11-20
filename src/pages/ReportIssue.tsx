@@ -9,6 +9,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Camera, MapPin, ArrowLeft } from "lucide-react";
+import { z } from "zod";
+
+const reportSchema = z.object({
+  title: z.string().trim().min(5, "Title must be at least 5 characters").max(100, "Title must be less than 100 characters"),
+  description: z.string().trim().min(10, "Description must be at least 10 characters").max(1000, "Description must be less than 1000 characters"),
+  category: z.enum(["pothole", "streetlight", "trash", "graffiti", "sidewalk", "drainage", "other"], {
+    errorMap: () => ({ message: "Please select a valid category" })
+  }),
+  priority: z.enum(["low", "medium", "high", "urgent"]),
+});
+
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 const ReportIssue = () => {
   const navigate = useNavigate();
@@ -35,6 +48,20 @@ const ReportIssue = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file type
+      if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+        toast.error("Please upload a valid image file (JPEG, PNG, or WebP)");
+        e.target.value = "";
+        return;
+      }
+      
+      // Validate file size
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error("Image size must be less than 5MB");
+        e.target.value = "";
+        return;
+      }
+      
       setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -64,6 +91,21 @@ const ReportIssue = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+    
+    // Validate form inputs
+    try {
+      reportSchema.parse({
+        title,
+        description,
+        category,
+        priority,
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+        return;
+      }
+    }
     
     setLoading(true);
     try {
@@ -101,7 +143,8 @@ const ReportIssue = () => {
       toast.success("Report submitted successfully");
       navigate("/");
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error("An error occurred while submitting the report. Please try again.");
+      console.error("Report submission error:", error);
     } finally {
       setLoading(false);
     }
