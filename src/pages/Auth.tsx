@@ -6,6 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { z } from "zod";
+
+const passwordSchema = z.string()
+  .min(10, "Password must be at least 10 characters")
+  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+  .regex(/[0-9]/, "Password must contain at least one number")
+  .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character");
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,6 +24,19 @@ const Auth = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate password strength for signup only
+    if (!isLogin) {
+      try {
+        passwordSchema.parse(password);
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          toast.error(error.errors[0].message);
+          return;
+        }
+      }
+    }
+    
     setLoading(true);
 
     try {
@@ -84,8 +105,12 @@ const Auth = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
               />
+              {!isLogin && (
+                <p className="text-xs text-muted-foreground">
+                  Must be 10+ characters with uppercase, lowercase, number, and special character
+                </p>
+              )}
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Processing..." : isLogin ? "Sign In" : "Sign Up"}
