@@ -247,7 +247,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="bg-primary text-primary-foreground mt-20">
         <div className="max-w-7xl mx-auto px-4 py-8 text-center">
-          <p>© 2024 Civic Connect. Empowering communities through technology.</p>
+          <p>© 2025 Civic Connect. Empowering communities through technology.</p>
         </div>
       </footer>
     </div>
