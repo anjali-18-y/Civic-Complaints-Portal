@@ -120,11 +120,8 @@ const ReportIssue = () => {
 
         if (uploadError) throw uploadError;
         
-        const { data: { publicUrl } } = supabase.storage
-          .from("reports")
-          .getPublicUrl(fileName);
-        
-        imageUrl = publicUrl;
+        // Store only the filename - signed URLs will be generated when displaying
+        imageUrl = fileName;
       }
 
       const { error } = await supabase.from("reports").insert({
