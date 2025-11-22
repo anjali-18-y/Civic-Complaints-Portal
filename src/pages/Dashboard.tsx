@@ -197,14 +197,26 @@ const Dashboard = () => {
                           
                           <div className="flex items-center gap-4 text-sm text-muted-foreground">
                             <div className="flex items-center gap-1">
-                              <MapPin className="h-4 w-4" />
-                              <span className="capitalize">{report.category}</span>
+                              <span className="capitalize font-medium">{report.category}</span>
                             </div>
                             <div className="flex items-center gap-1">
                               <Calendar className="h-4 w-4" />
                               <span>{new Date(report.created_at).toLocaleDateString()}</span>
                             </div>
                           </div>
+                          
+                          {report.address && (
+                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                              <MapPin className="h-4 w-4" />
+                              <span>{report.address}</span>
+                            </div>
+                          )}
+                          
+                          {(report.latitude && report.longitude) && (
+                            <div className="text-xs text-muted-foreground">
+                              Coordinates: {Number(report.latitude).toFixed(6)}, {Number(report.longitude).toFixed(6)}
+                            </div>
+                          )}
 
                           {isAdmin && (
                             <div className="flex gap-2 pt-2">

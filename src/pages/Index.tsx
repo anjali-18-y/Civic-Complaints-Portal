@@ -202,6 +202,12 @@ const Index = () => {
                         <p className="text-sm text-muted-foreground">
                           {new Date(report.created_at).toLocaleDateString()}
                         </p>
+                        {report.address && (
+                          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                            <MapPin className="h-3 w-3" />
+                            <span className="line-clamp-1">{report.address}</span>
+                          </div>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
