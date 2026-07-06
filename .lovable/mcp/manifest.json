@@ -1,0 +1,213 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://xhcioifvackxsfgbhgpa.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "civic-connect-mcp",
+      "version": "0.1.0",
+      "title": "Civic Connect"
+    },
+    "tools": [
+      {
+        "name": "list_reports",
+        "title": "List civic reports",
+        "description": "List civic reports visible to the signed-in user. Regular users see their own reports; admins and staff see all. Optionally filter by status and category.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "in_progress",
+                "resolved",
+                "rejected"
+              ],
+              "description": "Only return reports with this status."
+            },
+            "category": {
+              "type": "string",
+              "enum": [
+                "pothole",
+                "streetlight",
+                "trash",
+                "graffiti",
+                "sidewalk",
+                "drainage",
+                "other"
+              ],
+              "description": "Only return reports with this category."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "description": "Max rows to return (default 25)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_report",
+        "title": "Get civic report",
+        "description": "Fetch a single civic report by id. Access is enforced by row-level security.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "The report id (uuid)."
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_report",
+        "title": "Submit a civic report",
+        "description": "Submit a new civic issue report (pothole, streetlight, trash, etc.) as the signed-in user. Optionally include latitude/longitude and an address.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 5,
+              "maxLength": 100,
+              "description": "Short title for the issue."
+            },
+            "description": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 1000,
+              "description": "Details about the issue."
+            },
+            "category": {
+              "type": "string",
+              "enum": [
+                "pothole",
+                "streetlight",
+                "trash",
+                "graffiti",
+                "sidewalk",
+                "drainage",
+                "other"
+              ],
+              "description": "Issue category."
+            },
+            "priority": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high",
+                "urgent"
+              ],
+              "description": "Priority (default medium)."
+            },
+            "latitude": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90,
+              "description": "Latitude of the issue location."
+            },
+            "longitude": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180,
+              "description": "Longitude of the issue location."
+            },
+            "address": {
+              "type": "string",
+              "maxLength": 300,
+              "description": "Human-readable address."
+            }
+          },
+          "required": [
+            "title",
+            "description",
+            "category"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "update_report_status",
+        "title": "Update report status",
+        "description": "Update the status of a civic report. Restricted to admin/staff users; row-level security enforces this on the server.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "The report id to update."
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "in_progress",
+                "resolved",
+                "rejected"
+              ],
+              "description": "The new status for the report."
+            },
+            "assigned_department": {
+              "type": "string",
+              "maxLength": 100,
+              "description": "Optional department to assign this report to."
+            }
+          },
+          "required": [
+            "id",
+            "status"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
