@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +21,21 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+
+  // Only allow same-origin relative paths starting with a single slash. This
+  // preserves OAuth consent redirects (e.g. /.lovable/oauth/consent?...)
+  // without letting an attacker send users to an external origin.
+  const rawNext = params.get("next");
+  const nextPath =
+    rawNext && rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : null;
+  const goNext = () => {
+    if (nextPath) {
+      window.location.href = nextPath;
+    } else {
+      navigate("/");
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,18 +62,18 @@ const Auth = () => {
         });
         if (error) throw error;
         toast.success("Logged in successfully");
-        navigate("/");
+        goNext();
       } else {
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/`,
+            emailRedirectTo: `${window.location.origin}${nextPath ?? "/"}`,
           },
         });
         if (error) throw error;
         toast.success("Account created successfully");
-        navigate("/");
+        goNext();
       }
     } catch (error: any) {
       if (isLogin) {
