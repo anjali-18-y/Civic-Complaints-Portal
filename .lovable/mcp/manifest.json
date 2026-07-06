@@ -26,21 +26,19 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
           "properties": {
             "status": {
-              "description": "Only return reports with this status.",
               "type": "string",
               "enum": [
                 "pending",
                 "in_progress",
                 "resolved",
                 "rejected"
-              ]
+              ],
+              "description": "Only return reports with this status."
             },
             "category": {
-              "description": "Only return reports with this category.",
               "type": "string",
               "enum": [
                 "pothole",
@@ -50,15 +48,18 @@
                 "sidewalk",
                 "drainage",
                 "other"
-              ]
+              ],
+              "description": "Only return reports with this category."
             },
             "limit": {
-              "description": "Max rows to return (default 25).",
               "type": "integer",
               "minimum": 1,
-              "maximum": 100
+              "maximum": 100,
+              "description": "Max rows to return (default 25)."
             }
-          }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "outputSchema": null
       },
@@ -72,19 +73,19 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
           "properties": {
             "id": {
               "type": "string",
               "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
               "description": "The report id (uuid)."
             }
           },
           "required": [
             "id"
-          ]
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "outputSchema": null
       },
@@ -99,7 +100,6 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
           "properties": {
             "title": {
@@ -128,38 +128,40 @@
               "description": "Issue category."
             },
             "priority": {
-              "description": "Priority (default medium).",
               "type": "string",
               "enum": [
                 "low",
                 "medium",
                 "high",
                 "urgent"
-              ]
+              ],
+              "description": "Priority (default medium)."
             },
             "latitude": {
-              "description": "Latitude of the issue location.",
               "type": "number",
               "minimum": -90,
-              "maximum": 90
+              "maximum": 90,
+              "description": "Latitude of the issue location."
             },
             "longitude": {
-              "description": "Longitude of the issue location.",
               "type": "number",
               "minimum": -180,
-              "maximum": 180
+              "maximum": 180,
+              "description": "Longitude of the issue location."
             },
             "address": {
-              "description": "Human-readable address.",
               "type": "string",
-              "maxLength": 300
+              "maxLength": 300,
+              "description": "Human-readable address."
             }
           },
           "required": [
             "title",
             "description",
             "category"
-          ]
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "outputSchema": null
       },
@@ -174,13 +176,11 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
           "properties": {
             "id": {
               "type": "string",
               "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
               "description": "The report id to update."
             },
             "status": {
@@ -194,15 +194,17 @@
               "description": "The new status for the report."
             },
             "assigned_department": {
-              "description": "Optional department to assign this report to.",
               "type": "string",
-              "maxLength": 100
+              "maxLength": 100,
+              "description": "Optional department to assign this report to."
             }
           },
           "required": [
             "id",
             "status"
-          ]
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "outputSchema": null
       }
