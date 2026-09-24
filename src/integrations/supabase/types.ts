@@ -14,6 +14,77 @@ export type Database = {
   }
   public: {
     Tables: {
+      etl_runs: {
+        Row: {
+          finished_at: string | null
+          id: string
+          issues: Json
+          rows_flagged: number
+          rows_loaded: number
+          rows_read: number
+          rows_rejected: number
+          source: string
+          started_at: string
+        }
+        Insert: {
+          finished_at?: string | null
+          id?: string
+          issues?: Json
+          rows_flagged?: number
+          rows_loaded?: number
+          rows_read?: number
+          rows_rejected?: number
+          source?: string
+          started_at?: string
+        }
+        Update: {
+          finished_at?: string | null
+          id?: string
+          issues?: Json
+          rows_flagged?: number
+          rows_loaded?: number
+          rows_read?: number
+          rows_rejected?: number
+          source?: string
+          started_at?: string
+        }
+        Relationships: []
+      }
+      report_status_history: {
+        Row: {
+          changed_at: string
+          changed_by: string | null
+          id: string
+          new_status: Database["public"]["Enums"]["report_status"]
+          old_status: Database["public"]["Enums"]["report_status"] | null
+          report_id: string
+        }
+        Insert: {
+          changed_at?: string
+          changed_by?: string | null
+          id?: string
+          new_status: Database["public"]["Enums"]["report_status"]
+          old_status?: Database["public"]["Enums"]["report_status"] | null
+          report_id: string
+        }
+        Update: {
+          changed_at?: string
+          changed_by?: string | null
+          id?: string
+          new_status?: Database["public"]["Enums"]["report_status"]
+          old_status?: Database["public"]["Enums"]["report_status"] | null
+          report_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_status_history_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reports: {
         Row: {
           address: string | null
@@ -21,11 +92,16 @@ export type Database = {
           category: Database["public"]["Enums"]["report_category"]
           created_at: string
           description: string
+          duplicate_of: string | null
+          first_response_at: string | null
           id: string
           image_url: string | null
+          is_duplicate: boolean
           latitude: number | null
           longitude: number | null
           priority: Database["public"]["Enums"]["report_priority"]
+          quality_flags: string[]
+          resolved_at: string | null
           status: Database["public"]["Enums"]["report_status"]
           title: string
           updated_at: string
@@ -37,11 +113,16 @@ export type Database = {
           category: Database["public"]["Enums"]["report_category"]
           created_at?: string
           description: string
+          duplicate_of?: string | null
+          first_response_at?: string | null
           id?: string
           image_url?: string | null
+          is_duplicate?: boolean
           latitude?: number | null
           longitude?: number | null
           priority?: Database["public"]["Enums"]["report_priority"]
+          quality_flags?: string[]
+          resolved_at?: string | null
           status?: Database["public"]["Enums"]["report_status"]
           title: string
           updated_at?: string
@@ -53,17 +134,30 @@ export type Database = {
           category?: Database["public"]["Enums"]["report_category"]
           created_at?: string
           description?: string
+          duplicate_of?: string | null
+          first_response_at?: string | null
           id?: string
           image_url?: string | null
+          is_duplicate?: boolean
           latitude?: number | null
           longitude?: number | null
           priority?: Database["public"]["Enums"]["report_priority"]
+          quality_flags?: string[]
+          resolved_at?: string | null
           status?: Database["public"]["Enums"]["report_status"]
           title?: string
           updated_at?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "reports_duplicate_of_fkey"
+            columns: ["duplicate_of"]
+            isOneToOne: false
+            referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -91,6 +185,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      department_for_category: {
+        Args: { _c: Database["public"]["Enums"]["report_category"] }
+        Returns: string
+      }
       is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
