@@ -137,7 +137,12 @@ const Dashboard = () => {
             <h1 className="text-2xl font-bold">Admin Dashboard</h1>
           </div>
           {isAdmin && (
-            <Badge variant="secondary">Admin</Badge>
+            <div className="flex items-center gap-2">
+              <Button variant="secondary" size="sm" onClick={() => navigate("/analytics")}>
+                Analytics
+              </Button>
+              <Badge variant="secondary">Admin</Badge>
+            </div>
           )}
         </div>
       </div>
@@ -203,6 +208,16 @@ const Dashboard = () => {
                               <Calendar className="h-4 w-4" />
                               <span>{new Date(report.created_at).toLocaleDateString()}</span>
                             </div>
+                            {report.assigned_department && (
+                              <span>→ {report.assigned_department}</span>
+                            )}
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            {(report.quality_flags ?? []).map((f: string) => (
+                              <Badge key={f} variant="outline" className="text-xs">
+                                {f.replace(/_/g, " ")}
+                              </Badge>
+                            ))}
                           </div>
                           
                           {report.address && (
